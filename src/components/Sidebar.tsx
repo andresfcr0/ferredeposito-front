@@ -14,7 +14,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import PeopleIcon from "@mui/icons-material/People";
 
-const drawerWidth = 240;
+const drawerWidth = 320;
 
 const menuItems = [
   {
@@ -23,17 +23,17 @@ const menuItems = [
     path: "/",
   },
   {
-    text: "Registrar Venta",
+    text: "Facturación",
     icon: <PointOfSaleIcon />,
     path: "/ventas",
   },
   {
-    text: "Registrar Compra",
+    text: "Compras",
     icon: <ShoppingCartIcon />,
     path: "/compras",
   },
   {
-    text: "Productos!!",
+    text: "Productos",
     icon: <InventoryIcon />,
     path: "/productos",
   },
@@ -60,7 +60,7 @@ export default function Sidebar() {
     >
       <Toolbar />
 
-      <List>
+      <List sx={{ marginLeft: 4 }}>
         {menuItems.map((item) => (
           <ListItemButton key={item.text}>
             <ListItemIcon>{item.icon}</ListItemIcon>

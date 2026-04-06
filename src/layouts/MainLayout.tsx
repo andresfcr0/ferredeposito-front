@@ -11,6 +11,7 @@ export default function MainLayout() {
         padding: 5,
         height: "100vh",
         width: "100%",
+        maxWidth: 2000,
       }}
     >
       <Sidebar />

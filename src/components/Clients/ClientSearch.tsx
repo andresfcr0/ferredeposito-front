@@ -10,7 +10,7 @@ export default function ClientSearch() {
   return (
     <Box
       sx={{
-        width: "40vw",
+        width: "100%",
         display: "flex",
         gap: 5,
         mb: 4,
