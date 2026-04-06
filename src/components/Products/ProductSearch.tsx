@@ -23,6 +23,7 @@ export default function ProductSearch() {
   >([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [inputValue, setInputValue] = useState<string>("");
 
   const removeProduct = (index: number) => {
     setResults((prev) => prev.filter((_, i) => i !== index));
@@ -49,6 +50,13 @@ export default function ProductSearch() {
     );
   };
 
+  const getTotal = () => {
+    return results.reduce(
+      (total, item) => total + item.quantity * item.price,
+      0,
+    );
+  };
+
   return (
     <>
       <Box
@@ -56,26 +64,40 @@ export default function ProductSearch() {
           width: "100%",
           display: "flex",
           gap: 5,
-          mb: 4,
-          flexDirection: "column",
+          mb: 0,
           backgroundColor: "#f5f5f5",
-          p: 5,
+          p: 4,
           borderRadius: 2,
+          boxSizing: "border-box",
         }}
       >
         <Autocomplete
+          sx={{ width: "30%" }}
           options={products}
           getOptionLabel={(option) => option.name}
           value={selectedProduct}
-          onChange={(_event, newValue) => addProduct(newValue)}
-          onInputChange={async (_event, newInputValue) => {
-            if (newInputValue) {
-              const a = await getProductLike(newInputValue);
-              setProducts(a);
-            } else {
+          inputValue={inputValue}
+          onOpen={() => {}}
+          onChange={(_event, newValue) => {
+            if (newValue) {
+              addProduct(newValue);
+              setSelectedProduct(null);
+              setInputValue("");
+            }
+          }}
+          onInputChange={(_event, newInputValue, reason) => {
+            setInputValue(newInputValue);
+            if (reason === "input" && newInputValue) {
+              const fetchProducts = async () => {
+                const a = await getProductLike(newInputValue);
+                setProducts(a);
+              };
+              fetchProducts();
+            } else if (reason === "clear") {
               setProducts([]);
             }
           }}
+          noOptionsText="Sin resultados"
           renderOption={(props, option) => (
             <Box component="li" {...props}>
               <Box>
@@ -146,7 +168,6 @@ export default function ProductSearch() {
                         updateQuantity(index, parseInt(e.target.value) || 1)
                       }
                       size="small"
-                      inputProps={{ min: 1 }}
                     />
                   </TableCell>
                   <TableCell align="center">
@@ -157,7 +178,6 @@ export default function ProductSearch() {
                         updatePrice(index, parseFloat(e.target.value) || 0)
                       }
                       size="small"
-                      inputProps={{ min: 0, step: 0.01 }}
                     />
                   </TableCell>
                   <TableCell align="center">
@@ -174,6 +194,28 @@ export default function ProductSearch() {
             </TableBody>
           </Table>
         </TableContainer>
+      </Box>
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          gap: 5,
+          mb: 4,
+          backgroundColor: "#f5f5f5",
+          p: 5,
+          borderRadius: 2,
+          boxSizing: "border-box",
+        }}
+      >
+        <p style={{ margin: 0, fontWeight: "bold", fontSize: "1.2em" }}>
+          Total: $
+          {getTotal().toLocaleString("es-ES", {
+            style: "currency",
+            currency: "COP",
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}
+        </p>
       </Box>
     </>
   );

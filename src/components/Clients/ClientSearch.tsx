@@ -17,6 +17,7 @@ export default function ClientSearch() {
         backgroundColor: "#f5f5f5",
         p: 5,
         borderRadius: 2,
+        boxSizing: "border-box",
       }}
     >
       <Autocomplete
