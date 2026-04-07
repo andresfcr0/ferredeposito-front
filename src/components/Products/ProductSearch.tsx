@@ -17,10 +17,19 @@ import { Delete as DeleteIcon } from "@mui/icons-material";
 import { getProductLike } from "../../services/API";
 import type { Product } from "../../types";
 
-export default function ProductSearch() {
-  const [results, setResults] = useState<
-    { product: Product; quantity: number; price: number }[]
-  >([]);
+type CartItem = { product: Product; quantity: number; price: number };
+
+interface ProductSearchProps {
+  results: CartItem[];
+  setResults: (
+    results: CartItem[] | ((prev: CartItem[]) => CartItem[]),
+  ) => void;
+}
+
+export default function ProductSearch({
+  results,
+  setResults,
+}: ProductSearchProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
@@ -98,25 +107,28 @@ export default function ProductSearch() {
             }
           }}
           noOptionsText="Sin resultados"
-          renderOption={(props, option) => (
-            <Box component="li" {...props}>
-              <Box>
-                <Typography variant="body1" fontWeight="bold">
-                  {option.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Precio: $
-                  {option.sale_price.toLocaleString("es-ES", {
-                    style: "currency",
-                    currency: "COP",
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                  })}{" "}
-                  | Stock: {option.stock} | Unidad: {option.unit}
-                </Typography>
+          renderOption={(props, option) => {
+            const { key, ...otherProps } = props;
+            return (
+              <Box component="li" key={key} {...otherProps}>
+                <Box>
+                  <Typography variant="body1" fontWeight="bold">
+                    {option.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Precio: $
+                    {option.sale_price.toLocaleString("es-ES", {
+                      style: "currency",
+                      currency: "COP",
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    })}{" "}
+                    | Stock: {option.stock} | Unidad: {option.unit}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
-          )}
+            );
+          }}
           renderInput={(params) => (
             <TextField
               {...params}

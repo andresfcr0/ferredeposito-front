@@ -20,4 +20,17 @@ export interface Client {
 export interface SaleItem {
   product_id: number;
   quantity: number;
+  price: number;
+}
+
+export interface Sale {
+  client_id: number;
+  items: SaleItem[];
+  total: number;
+}
+
+export interface APIResponse {
+  success: boolean;
+  message: string;
+  data?: any;
 }

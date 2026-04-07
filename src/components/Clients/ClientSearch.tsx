@@ -3,9 +3,18 @@ import { TextField, Box, Autocomplete } from "@mui/material";
 import { getClientLike } from "../../services/API";
 import type { Client } from "../../types";
 
-export default function ClientSearch() {
+interface ClientSearchProps {
+  selectedClient: Client | null;
+  setSelectedClient: (client: Client | null) => void;
+}
+
+export default function ClientSearch({
+  selectedClient,
+  setSelectedClient,
+}: ClientSearchProps) {
   const [clients, setClients] = useState<Client[]>([]);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [inputValueName, setInputValueName] = useState<string>("");
+  const [inputValueDocument, setInputValueDocument] = useState<string>("");
 
   return (
     <Box
@@ -25,12 +34,19 @@ export default function ClientSearch() {
         options={clients}
         getOptionLabel={(option) => option.name}
         value={selectedClient}
-        onChange={(_event, newValue) => setSelectedClient(newValue)}
-        onInputChange={async (_event, newInputValue) => {
-          if (newInputValue) {
+        inputValue={inputValueName}
+        noOptionsText="Sin resultados"
+        onChange={(_event, newValue) => {
+          setSelectedClient(newValue);
+          setInputValueName("");
+          setInputValueDocument("");
+        }}
+        onInputChange={async (_event, newInputValue, reason) => {
+          setInputValueName(newInputValue);
+          if (reason === "input" && newInputValue) {
             const a = await getClientLike(newInputValue);
             setClients(a);
-          } else {
+          } else if (reason === "clear") {
             setClients([]);
           }
         }}
@@ -46,14 +62,21 @@ export default function ClientSearch() {
       <Autocomplete
         fullWidth
         options={clients}
-        getOptionLabel={(option) => option.document_number}
+        getOptionLabel={(option) => option.document_number || ""}
         value={selectedClient}
-        onChange={(_event, newValue) => setSelectedClient(newValue)}
-        onInputChange={async (_event, newInputValue) => {
-          if (newInputValue) {
+        inputValue={inputValueDocument}
+        noOptionsText="Sin resultados"
+        onChange={(_event, newValue) => {
+          setSelectedClient(newValue);
+          setInputValueName("");
+          setInputValueDocument("");
+        }}
+        onInputChange={async (_event, newInputValue, reason) => {
+          setInputValueDocument(newInputValue);
+          if (reason === "input" && newInputValue) {
             const a = await getClientLike(undefined, newInputValue);
             setClients(a);
-          } else {
+          } else if (reason === "clear") {
             setClients([]);
           }
         }}
@@ -66,14 +89,6 @@ export default function ClientSearch() {
           />
         )}
       />
-      {/* {selectedClient && (
-          <TextField
-            label="Documento do Cliente"
-            variant="filled"
-            fullWidth
-            value={selectedClient.id}
-          />
-        )} */}
     </Box>
   );
 }
